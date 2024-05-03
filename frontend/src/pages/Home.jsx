@@ -17,6 +17,19 @@ const Home = () => {
 
   const { enqueueSnackbar } = useSnackbar();
 
+  useEffect(() => {
+    const fetchTodos = async () => {
+      try {
+        const response = await axios.get("http://localhost:5555");
+        setTodos(response.data.data);
+      } catch (error) {
+        console.error("Error fetching todos:", error);
+      }
+    };
+
+    fetchTodos();
+  }, [todos]);
+
   const clearCompleted = () => {
     axios
       .delete(`http://localhost:5555/completed`)
@@ -33,19 +46,6 @@ const Home = () => {
         console.log(error);
       });
   };
-
-  useEffect(() => {
-    const fetchTodos = async () => {
-      try {
-        const response = await axios.get("http://localhost:5555");
-        setTodos(response.data.data);
-      } catch (error) {
-        console.error("Error fetching todos:", error);
-      }
-    };
-
-    fetchTodos();
-  }, [todos]);
 
   useEffect(() => {
     const filteredResult = filterTodos(todos, filter);
@@ -78,6 +78,7 @@ const Home = () => {
       await axios.put("http://localhost:5555/reorder", {
         newOrder: updatedTodos,
       });
+      setTodos(updatedTodos);
     } catch (error) {
       console.error("Error updating todo order:", error);
     }
